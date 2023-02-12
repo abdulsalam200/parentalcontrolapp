@@ -1,0 +1,97 @@
+{
+  "project_info": {
+    "project_number": "126294812941",
+    "project_id": "parentalcontrolapp-541e3",
+    "storage_bucket": "parentalcontrolapp-541e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126294812941:android:2a76b79de14463964a6844",
+        "android_client_info": {
+          "package_name": "com.example.firebasetest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126294812941-719j797u28ajh2vi5i5qamlh2ucfn56o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxM9BGlrfMpJc5IYTLbVKJ8899GttRU1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126294812941-719j797u28ajh2vi5i5qamlh2ucfn56o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126294812941:android:00bf7cae79e78a704a6844",
+        "android_client_info": {
+          "package_name": "com.example.myparentalcontrolapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126294812941-719j797u28ajh2vi5i5qamlh2ucfn56o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxM9BGlrfMpJc5IYTLbVKJ8899GttRU1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126294812941-719j797u28ajh2vi5i5qamlh2ucfn56o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126294812941:android:63c51241d33d123d4a6844",
+        "android_client_info": {
+          "package_name": "com.example.parentalcontrolapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126294812941-719j797u28ajh2vi5i5qamlh2ucfn56o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxM9BGlrfMpJc5IYTLbVKJ8899GttRU1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126294812941-719j797u28ajh2vi5i5qamlh2ucfn56o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
