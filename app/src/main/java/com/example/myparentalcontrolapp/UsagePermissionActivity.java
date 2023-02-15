@@ -19,6 +19,12 @@ public class UsagePermissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usage_permission);
 
+        if (!Utils.getUsageStatsList(UsagePermissionActivity.this).isEmpty()){
+            Intent intent = new Intent(UsagePermissionActivity.this, FinishScreenActivity.class);
+            startActivity(intent);
+            return;
+        }
+
         Log.i("abd", "on usage permact");
 
         usageBtn = (Button) findViewById(R.id.btn2);

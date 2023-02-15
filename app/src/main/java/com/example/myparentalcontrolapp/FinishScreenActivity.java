@@ -2,6 +2,8 @@ package com.example.myparentalcontrolapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,13 +18,30 @@ public class FinishScreenActivity extends AppCompatActivity {
     FirebaseAuth auth;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        auth = FirebaseAuth.getInstance();
+
+        if (auth.getCurrentUser() == null) {
+            Intent intent = new Intent(FinishScreenActivity.this, LoginActivity.class);
+            startActivity(intent);
+            return;
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finish_screen);
 
         auth = FirebaseAuth.getInstance();
+
+
         prefUtil = new SharedPrefUtils(FinishScreenActivity.this);
         finishBtn = (Button) findViewById(R.id.btn4);
+
+
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -31,8 +50,11 @@ public class FinishScreenActivity extends AppCompatActivity {
 
                 auth.signOut();
                 BackgroundManager.getInstance().init(FinishScreenActivity.this).startService();
-                FinishScreenActivity.this.moveTaskToBack(true);
+//                FinishScreenActivity.this.finishAffinity();
+                moveTaskToBack(true);
 
+//                finishAndRemoveTask();
+//                System.exit(0);
             }
         });
     }

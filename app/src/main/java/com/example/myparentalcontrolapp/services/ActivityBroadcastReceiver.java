@@ -52,30 +52,35 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         Utils utils = new Utils(context);
         SharedPrefUtils prefUtil = new SharedPrefUtils(context);
 
+        Boolean isBlocked = prefUtil.getBoolean("userBlocked");
+        if(isBlocked) {
+            return;
+        }
+
         // get app package name using UsageEvents query
         String packageName = utils.getLauncherTopApp();
 
-        int appTimeLimit = 1; // 1 minute
 
         String runningApp = prefUtil.getString("active_app");
-        String appStartTime = prefUtil.getString("active_app_start");
+        String appStartTime = prefUtil.getString("startTime");
+        String childLimit = prefUtil.getString("child_limit") ;
         long runningAppStartTime = appStartTime.isEmpty() ? 0 : Long.parseLong(appStartTime);
-
-//        Log.i("MyTimerTime", (new Date(runningAppStartTime)).toString());
-        if(!runningApp.isEmpty() && runningApp.equals(packageName)) {
-            long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
+        long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
+        long timeLimit = childLimit.isEmpty() ? 0 : Long.parseLong(childLimit) * 60;
 //            Log.i("MyTimerDiff", String.valueOf(timeDiff));
-            if (timeDiff >= (appTimeLimit * 60)) {
+        if (timeDiff >= timeLimit) {
 //                Log.i("MyTimer", "Lock the app");
-                killThisPackageIfRunning(context, packageName);
+            killThisPackageIfRunning(context, packageName);
+            prefUtil.putBoolean("userBlocked", true);
 //                Intent i = new Intent(context, ScreenBlocker.class);
 //                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //                i.putExtra("broadcast_receiver", "broadcast_receiver");
 //                context.startActivity(i);
-            }
-        } else {
+            return;
+        }
+//        Log.i("MyTimerTime", (new Date(runningAppStartTime)).toString());
+        if(runningApp.isEmpty() || !runningApp.equals(packageName)){
             prefUtil.putString("active_app", packageName);
-            prefUtil.putString("active_app_start", String.valueOf(System.currentTimeMillis()));
 
             // Get app name from package name
             PackageManager packageManager= context.getPackageManager();

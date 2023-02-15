@@ -6,11 +6,14 @@ public class Child {
     private String gender;
     private String id;
 
-    public Child(String name, String age, String gender, String id) {
+    private Long timeLimit;
+
+    public Child(String name, String age, String gender, String id, Long timeLimit) {
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.id = id;
+        this.timeLimit = timeLimit;
     }
 
     public String getName() {
@@ -44,4 +47,9 @@ public class Child {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void setTimeLimit(Long timeLimit) {this.timeLimit = timeLimit;}
+
+    public Long getTimeLimit() {return timeLimit;}
 }
+
