@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.myparentalcontrolapp.AddChildActivity;
 import com.example.myparentalcontrolapp.ChildListActivity;
+import com.example.myparentalcontrolapp.ScreenBlocker;
 import com.example.myparentalcontrolapp.utils.SharedPrefUtils;
 import com.example.myparentalcontrolapp.utils.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,14 +52,24 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
 
         Utils utils = new Utils(context);
         SharedPrefUtils prefUtil = new SharedPrefUtils(context);
+        String packageName = utils.getLauncherTopApp();
 
         Boolean isBlocked = prefUtil.getBoolean("userBlocked");
         if(isBlocked) {
+
+            Log.i("ActivityBroadcast", context.getPackageName());
+            if(packageName == "com.whatsapp") {
+                prefUtil.putBoolean("userBlocked", false);
+                return;
+            }
+
+            if(packageName != context.getPackageName()) {
+                blockApp(context, packageName);
+            }
             return;
         }
 
         // get app package name using UsageEvents query
-        String packageName = utils.getLauncherTopApp();
 
 
         String runningApp = prefUtil.getString("active_app");
@@ -70,12 +81,8 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
 //            Log.i("MyTimerDiff", String.valueOf(timeDiff));
         if (timeDiff >= timeLimit) {
 //                Log.i("MyTimer", "Lock the app");
-            killThisPackageIfRunning(context, packageName);
             prefUtil.putBoolean("userBlocked", true);
-//                Intent i = new Intent(context, ScreenBlocker.class);
-//                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                i.putExtra("broadcast_receiver", "broadcast_receiver");
-//                context.startActivity(i);
+            blockApp(context, packageName);
             return;
         }
 //        Log.i("MyTimerTime", (new Date(runningAppStartTime)).toString());
@@ -84,12 +91,12 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
 
             // Get app name from package name
             PackageManager packageManager= context.getPackageManager();
-            String appName = null;
+            String appName = packageName;
             try {
                 appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-//                Log.e("MyTimer", e.getMessage());
+                Log.e("ActivityBroadcast", e.getMessage());
             }
 
             // add this app in Activity Logs
@@ -119,6 +126,15 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         }
 
 
+    }
+
+    private void blockApp(Context context, String packageName) {
+        //killThisPackageIfRunning(context, packageName);
+        Log.i("ActivityBroadcast", packageName+" closing");
+        Intent i = new Intent(context, ScreenBlocker.class);
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+      i.putExtra("broadcast_receiver", "broadcast_receiver");
+        context.startActivity(i);
     }
 
     public boolean checkTime(String startTimeHour, String startTimeMin, String endTimeHour, String endTimeMin) {

@@ -33,7 +33,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                textView.setText("done!");
+                textView.setText("00:00");
             }
         }.start();
     }
