@@ -2,6 +2,7 @@ package com.example.myparentalcontrolapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.TextView;
@@ -15,6 +16,13 @@ public class DashboardActivity extends AppCompatActivity {
 
     private  void updateTimer()
     {
+        Boolean isBlocked = prefUtil.getBoolean("userBlocked");
+        if (isBlocked) {
+            Intent i = new Intent(DashboardActivity.this, ScreenBlocker.class);
+            startActivity(i);
+            return;
+        }
+
         String appStartTime = prefUtil.getString("startTime");
         String childLimit = prefUtil.getString("child_limit") ;
         long runningAppStartTime = appStartTime.isEmpty() ? 0 : Long.parseLong(appStartTime);
@@ -26,10 +34,13 @@ public class DashboardActivity extends AppCompatActivity {
                 Long sec = millisUntilFinished / 1000;
                 Long mins = sec >= 60 ? sec/60 : 0;
                 sec = sec%60;
+                Long hrs = mins >= 60 ? mins/60 : 0;
+                mins = mins%60;
 
+                String hours = hrs/10 <1 ? "0"+hrs : String.valueOf(hrs);
                 String minutes = mins/10 < 1 ? "0"+mins : String.valueOf(mins);
                 String seconds = sec/10 < 1 ? "0"+sec : String.valueOf(sec);
-                textView.setText(minutes+":"+seconds);
+                textView.setText(hours+":"+minutes+":"+seconds);
             }
 
             public void onFinish() {

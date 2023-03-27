@@ -8,12 +8,14 @@ public class Child {
 
     private Long timeLimit;
 
-    public Child(String name, String age, String gender, String id, Long timeLimit) {
+    private String blockedApps;
+    public Child(String name, String age, String gender, String id, Long timeLimit, String blockedApps) {
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.id = id;
         this.timeLimit = timeLimit;
+        this.blockedApps = blockedApps;
     }
 
     public String getName() {
@@ -51,5 +53,13 @@ public class Child {
     public void setTimeLimit(Long timeLimit) {this.timeLimit = timeLimit;}
 
     public Long getTimeLimit() {return timeLimit;}
+
+    public void setBlockedApps(String blockedApps) {
+        this.blockedApps = blockedApps;
+    }
+
+    public String getBlockedApps() {
+        return blockedApps;
+    }
 }
 

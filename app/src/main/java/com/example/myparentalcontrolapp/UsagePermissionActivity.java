@@ -14,16 +14,27 @@ public class UsagePermissionActivity extends AppCompatActivity {
 
     Button usageBtn;
 
+    private  void checkForUsagePermissionGranted()
+    {
+        if (!Utils.getUsageStatsList(UsagePermissionActivity.this).isEmpty()){
+            Intent intent = new Intent(UsagePermissionActivity.this, OtherPermissionsActivity.class);
+            startActivity(intent);
+            return;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkForUsagePermissionGranted();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usage_permission);
 
-        if (!Utils.getUsageStatsList(UsagePermissionActivity.this).isEmpty()){
-            Intent intent = new Intent(UsagePermissionActivity.this, FinishScreenActivity.class);
-            startActivity(intent);
-            return;
-        }
+        checkForUsagePermissionGranted();
 
         Log.i("abd", "on usage permact");
 
@@ -39,7 +50,7 @@ public class UsagePermissionActivity extends AppCompatActivity {
                     return;
                 }
 
-                Intent intent = new Intent(UsagePermissionActivity.this, FinishScreenActivity.class);
+                Intent intent = new Intent(UsagePermissionActivity.this, OtherPermissionsActivity.class);
                 startActivity(intent);
             }
         });

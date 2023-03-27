@@ -49,13 +49,13 @@ public class LoginActivity extends AppCompatActivity {
         loginBtn = (Button) findViewById(R.id.btn1);
         emailEditText = (EditText) findViewById(R.id.ed1);
         passwordEditText = (EditText) findViewById(R.id.ed2);
-        // add eventListener on login button
-        // get email and password values from text fields
-        // call login method with email and password
+
+        // eventListener on login button
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                // get email and password values from text fields
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 if (email.isEmpty() || password.isEmpty())
@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                             return;
                 }
-
+                // call login method with email and password
                 login(email,password);
             }
         });

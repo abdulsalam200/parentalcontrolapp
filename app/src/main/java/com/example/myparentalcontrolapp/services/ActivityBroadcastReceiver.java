@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi;
 import com.example.myparentalcontrolapp.AddChildActivity;
 import com.example.myparentalcontrolapp.ChildListActivity;
 import com.example.myparentalcontrolapp.ScreenBlocker;
+import com.example.myparentalcontrolapp.receivers.UnblockReceiver;
 import com.example.myparentalcontrolapp.utils.SharedPrefUtils;
 import com.example.myparentalcontrolapp.utils.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -23,16 +24,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ActivityBroadcastReceiver extends BroadcastReceiver {
-    Calendar currentTime;
-    Calendar fromTime;
-    Calendar toTime;
-    Calendar currentDay;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public static void killThisPackageIfRunning(final Context context, String packageName) {
@@ -47,45 +45,53 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
-        // lock the app after given time
-        Log.i("MyBackgroundReceive", context.getPackageName().toString());
-
         Utils utils = new Utils(context);
         SharedPrefUtils prefUtil = new SharedPrefUtils(context);
         String packageName = utils.getLauncherTopApp();
+        Log.i("ActivityBroadcast", packageName.toString());
 
+
+        // if app is in blocked apps list, kill the app
+        String[] blockedApps = prefUtil.getString("child_blockedApps").split(",");
+        if(!packageName.isEmpty() && Arrays.asList(blockedApps).contains(packageName)) {
+            blockApp(context, packageName);
+            return;
+        }
+
+
+        // calculate time diff from start
+        String appStartTime = prefUtil.getString("startTime");
+        String childLimit = prefUtil.getString("child_limit") ;
+        long runningAppStartTime = appStartTime.isEmpty() ? 0 : Long.parseLong(appStartTime);
+        long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
+        Log.i("ActivityBroadcast", timeDiff+" time difference");
+
+        // if screen time ends, block user to access device
         Boolean isBlocked = prefUtil.getBoolean("userBlocked");
         if(isBlocked) {
-
-            Log.i("ActivityBroadcast", context.getPackageName());
-            if(packageName == "com.whatsapp") {
-                prefUtil.putBoolean("userBlocked", false);
-                return;
+            long resetTime = 60 * 7; // 10 minutes to reset
+            if (timeDiff >= resetTime) {
+                Intent i = new Intent(UnblockReceiver.str_receiver);
+                context.sendBroadcast(i);
             }
-
-            if(packageName != context.getPackageName()) {
+            if (!packageName.equals(context.getPackageName().toString())) {
                 blockApp(context, packageName);
             }
             return;
         }
 
-        // get app package name using UsageEvents query
 
 
+        // check if screen timeLimit is exceeded
         String runningApp = prefUtil.getString("active_app");
-        String appStartTime = prefUtil.getString("startTime");
-        String childLimit = prefUtil.getString("child_limit") ;
-        long runningAppStartTime = appStartTime.isEmpty() ? 0 : Long.parseLong(appStartTime);
-        long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
         long timeLimit = childLimit.isEmpty() ? 0 : Long.parseLong(childLimit) * 60;
-//            Log.i("MyTimerDiff", String.valueOf(timeDiff));
         if (timeDiff >= timeLimit) {
-//                Log.i("MyTimer", "Lock the app");
             prefUtil.putBoolean("userBlocked", true);
             blockApp(context, packageName);
             return;
         }
-//        Log.i("MyTimerTime", (new Date(runningAppStartTime)).toString());
+
+        // if next app opens, log info in database
         if(runningApp.isEmpty() || !runningApp.equals(packageName)){
             prefUtil.putString("active_app", packageName);
 
@@ -96,32 +102,34 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
                 appName = (String) packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA));
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-                Log.e("ActivityBroadcast", e.getMessage());
+                Log.e("ActivityBroadcast","AppName Error: "+ e.getMessage());
+            } finally {
+                if(packageName.isEmpty())
+                    return;
+                appName = appName.isEmpty() ? packageName : appName;
+                // add this app in Activity Logs
+                Map<String, Object> data = new HashMap();
+                data.put("appName", appName);
+                data.put("packageName", packageName);
+                data.put("startTime", Long.valueOf(System.currentTimeMillis()));
+                data.put("message", appName + " has opened");
+                data.put("childId", prefUtil.getString("child_id"));
+
+                db.collection("activity_logs")
+                        .add(data)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("abd", "Activity Log written with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("abd", "Error adding Activity Log", e);
+                            }
+                        });
             }
-
-            // add this app in Activity Logs
-            Map<String, Object> data = new HashMap();
-            data.put("appName", appName);
-            data.put("packageName", packageName);
-            data.put("startTime", Long.valueOf(System.currentTimeMillis()));
-            data.put("message", appName+" has opened");
-            data.put("childId", prefUtil.getString("child_id"));
-
-            db.collection("activity_logs")
-                    .add(data)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            Log.d("abd", "Activity Log written with ID: " + documentReference.getId());
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("abd", "Error adding Activity Log", e);
-                        }
-                    });
-
 
         }
 
@@ -135,40 +143,5 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
       i.putExtra("broadcast_receiver", "broadcast_receiver");
         context.startActivity(i);
-    }
-
-    public boolean checkTime(String startTimeHour, String startTimeMin, String endTimeHour, String endTimeMin) {
-        try {
-            currentTime = Calendar.getInstance();
-            currentTime.get(Calendar.HOUR_OF_DAY);
-            currentTime.get(Calendar.MINUTE);
-            fromTime = Calendar.getInstance();
-            fromTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(startTimeHour));
-            fromTime.set(Calendar.MINUTE, Integer.valueOf(startTimeMin));
-            fromTime.set(Calendar.SECOND, 0);
-            fromTime.set(Calendar.MILLISECOND, 0);
-            toTime = Calendar.getInstance();
-            toTime.set(Calendar.HOUR_OF_DAY, Integer.valueOf(endTimeHour));
-            toTime.set(Calendar.MINUTE, Integer.valueOf(endTimeMin));
-            toTime.set(Calendar.SECOND, 0);
-            toTime.set(Calendar.MILLISECOND, 0);
-            if(currentTime.after(fromTime) && currentTime.before(toTime)){
-                return true;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return false;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public boolean checkDay(List<String> weekdays){
-        currentDay = Calendar.getInstance();
-        String today = LocalDate.now().getDayOfWeek().name();
-        if(weekdays.contains(today)){
-            return true;
-        } else {
-            return false;
-        }
     }
 }

@@ -2,6 +2,11 @@ package com.example.myparentalcontrolapp.services;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,12 +16,13 @@ public class CustomJobIntentService extends JobIntentService {
     private static final int JOB_ID = 15462;
 
     public static void enqueueWork(Context ctx, Intent work) {
+        Log.i("CustomJobIntentService", "enqueueWork");
         enqueueWork(ctx, CustomJobIntentService.class, JOB_ID, work);
     }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        Log.i("MyBackgroundHandle", "onhandle");
+        Log.i("CustomJobIntentService", "onhandle");
         runApplock();
     }
 
@@ -42,9 +48,13 @@ public class CustomJobIntentService extends JobIntentService {
                     wait(endTime - System.currentTimeMillis());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.e("MyBackgroundError", e.getMessage());
+                    Log.e("CustomJobIntentService", e.getMessage());
                 }
             }
         }
     }
+
+
+
+
 }

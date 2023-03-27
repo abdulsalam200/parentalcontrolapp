@@ -81,8 +81,9 @@ public class ChildListActivity extends AppCompatActivity {
                         String gender = document.getString("gender");
                         String id = document.getId();
                         Long timeLimit = document.getLong("timeLimit");
+                        String blockedApps = document.getString("blockedApps");
 
-                        childList.add(new Child(name, age, gender, id, timeLimit));
+                        childList.add(new Child(name, age, gender, id, timeLimit, blockedApps));
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -97,6 +98,7 @@ public class ChildListActivity extends AppCompatActivity {
 
                         prefs.putString("child_id", selectedChild.getId());
                         prefs.putString("child_limit", String.valueOf(selectedChild.getTimeLimit()));
+                        prefs.putString("child_blockedApps", selectedChild.getBlockedApps());
 
                         Intent intent = new Intent(ChildListActivity.this, UsagePermissionActivity.class);
                         startActivity(intent);
