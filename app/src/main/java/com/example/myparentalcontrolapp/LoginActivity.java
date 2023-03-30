@@ -32,16 +32,16 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
         auth = FirebaseAuth.getInstance();
         prefUtil = new SharedPrefUtils(LoginActivity.this);
+        Boolean blockApp = getIntent().getBooleanExtra("login", false);
 
         // logout if user is already loggedin
         if(auth.getCurrentUser()!= null) {
-            Log.i("FirebaseTest", "User is logged in");
             // Start Next Activity
             //return;
             openChildList();
         }
 
-        if (prefUtil.getString("startTime") != ""){
+        if (prefUtil.getString("startTime") != "" && !blockApp){
             Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
             startActivity(i);
         }
@@ -65,12 +65,12 @@ public class LoginActivity extends AppCompatActivity {
                             return;
                 }
                 // call login method with email and password
-                login(email,password);
+                login(email,password, blockApp);
             }
         });
     }
 
-    private  void login(String email, String password)
+    private  void login(String email, String password, Boolean blockApp)
     {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -83,8 +83,13 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Start Next Activity
 
+
                             if (user != null) {
-                                openChildList();
+                                if(blockApp) {
+                                    moveTaskToBack(false);
+                                } else {
+                                    openChildList();
+                                }
 
                             }
                         } else {

@@ -14,7 +14,11 @@ public class ScreenBlocker extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkForUnblock();
+        Boolean blockApp = getIntent().getBooleanExtra("blockApp", false);
+
+        if(!blockApp) {
+            checkForUnblock();
+        }
     }
 
     @Override
@@ -22,7 +26,12 @@ public class ScreenBlocker extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_blocker);
         prefUtil = new SharedPrefUtils(ScreenBlocker.this);
-        checkForUnblock();
+
+        Boolean blockApp = getIntent().getBooleanExtra("blockApp", false);
+
+        if(!blockApp) {
+            checkForUnblock();
+        }
     }
         private void checkForUnblock(){
             Boolean isBlocked = prefUtil.getBoolean("userBlocked");

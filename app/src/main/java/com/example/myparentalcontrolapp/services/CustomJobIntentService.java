@@ -28,12 +28,14 @@ public class CustomJobIntentService extends JobIntentService {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
+        Log.i("AppDestroy", "on task remove job intent");
         BackgroundManager.getInstance().init(this).startService();
         super.onTaskRemoved(rootIntent);
     }
 
     @Override
     public void onDestroy() {
+        Log.i("AppDestroy", "on destroy job intent");
         BackgroundManager.getInstance().init(this).startService();
         super.onDestroy();
     }

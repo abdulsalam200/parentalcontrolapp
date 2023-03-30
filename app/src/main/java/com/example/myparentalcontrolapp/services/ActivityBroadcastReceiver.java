@@ -14,12 +14,14 @@ import androidx.annotation.RequiresApi;
 
 import com.example.myparentalcontrolapp.AddChildActivity;
 import com.example.myparentalcontrolapp.ChildListActivity;
+import com.example.myparentalcontrolapp.LoginActivity;
 import com.example.myparentalcontrolapp.ScreenBlocker;
 import com.example.myparentalcontrolapp.receivers.UnblockReceiver;
 import com.example.myparentalcontrolapp.utils.SharedPrefUtils;
 import com.example.myparentalcontrolapp.utils.Utils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -33,6 +35,8 @@ import java.util.Map;
 public class ActivityBroadcastReceiver extends BroadcastReceiver {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    FirebaseAuth auth = FirebaseAuth.getInstance();
+
     public static void killThisPackageIfRunning(final Context context, String packageName) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -41,6 +45,7 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         context.startActivity(startMain);
         activityManager.killBackgroundProcesses(packageName);
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -54,7 +59,18 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         // if app is in blocked apps list, kill the app
         String[] blockedApps = prefUtil.getString("child_blockedApps").split(",");
         if(!packageName.isEmpty() && Arrays.asList(blockedApps).contains(packageName)) {
-            blockApp(context, packageName);
+            Log.i("ActivityBroadcast", "app is blocked");
+            blockApp(context, packageName, true);
+            return;
+        }
+
+
+        if(!packageName.isEmpty() && packageName.equals("com.android.settings") && auth.getCurrentUser()==null) {
+            Intent in = new Intent(context, LoginActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            in.putExtra("login",true);
+
+            context.startActivity(in);
             return;
         }
 
@@ -75,7 +91,7 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
                 context.sendBroadcast(i);
             }
             if (!packageName.equals(context.getPackageName().toString())) {
-                blockApp(context, packageName);
+                blockApp(context, packageName, false);
             }
             return;
         }
@@ -87,7 +103,7 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         long timeLimit = childLimit.isEmpty() ? 0 : Long.parseLong(childLimit) * 60;
         if (timeDiff >= timeLimit) {
             prefUtil.putBoolean("userBlocked", true);
-            blockApp(context, packageName);
+            blockApp(context, packageName, false);
             return;
         }
 
@@ -136,12 +152,13 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
 
     }
 
-    private void blockApp(Context context, String packageName) {
+    private void blockApp(Context context, String packageName, Boolean block) {
         //killThisPackageIfRunning(context, packageName);
         Log.i("ActivityBroadcast", packageName+" closing");
         Intent i = new Intent(context, ScreenBlocker.class);
-      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-      i.putExtra("broadcast_receiver", "broadcast_receiver");
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.putExtra("broadcast_receiver", "broadcast_receiver");
+        i.putExtra("blockApp", block);
         context.startActivity(i);
     }
 }

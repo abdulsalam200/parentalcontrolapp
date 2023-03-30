@@ -126,7 +126,11 @@
         <receiver
             android:name=".services.ActivityBroadcastReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name=".services.CustomIntentService"
