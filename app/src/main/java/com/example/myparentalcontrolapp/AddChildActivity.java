@@ -81,7 +81,7 @@ public class AddChildActivity extends AppCompatActivity {
                 data.put("age", age);
                 data.put("gender", gender);
                 data.put("userId", auth.getCurrentUser().getUid());
-                data.put("timeLimit", 5);
+                data.put("timeLimit", 500);
                 data.put("blockedApps", "");
 
                 db.collection("childs")

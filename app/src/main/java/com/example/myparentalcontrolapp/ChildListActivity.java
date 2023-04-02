@@ -94,10 +94,11 @@ public class ChildListActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         Child selectedChild = childList.get(i);
-                        Log.i("abd", "selected - " + selectedChild.getId());
+                        Log.i("ChildListActivity", "selected - " + (selectedChild.getTimeLimit() == null));
 
+                        Long childLimit = selectedChild.getTimeLimit();
                         prefs.putString("child_id", selectedChild.getId());
-                        prefs.putString("child_limit", String.valueOf(selectedChild.getTimeLimit()));
+                        prefs.putString("child_limit", childLimit == null ? null : String.valueOf(childLimit));
                         prefs.putString("child_blockedApps", selectedChild.getBlockedApps());
 
                         Intent intent = new Intent(ChildListActivity.this, UsagePermissionActivity.class);

@@ -96,11 +96,11 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
-
+        Log.i("MyActivityBroadcast", childLimit);
 
         // check if screen timeLimit is exceeded
         String runningApp = prefUtil.getString("active_app");
-        long timeLimit = childLimit.isEmpty() ? 0 : Long.parseLong(childLimit) * 60;
+        long timeLimit = (childLimit == null || childLimit.isEmpty()) ? 0 : Long.parseLong(childLimit) * 60;
         if (timeDiff >= timeLimit) {
             prefUtil.putBoolean("userBlocked", true);
             blockApp(context, packageName, false);
@@ -122,6 +122,8 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
             } finally {
                 if(packageName.isEmpty())
                     return;
+
+
                 appName = appName.isEmpty() ? packageName : appName;
                 // add this app in Activity Logs
                 Map<String, Object> data = new HashMap();

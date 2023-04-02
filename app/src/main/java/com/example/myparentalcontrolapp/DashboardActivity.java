@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.myparentalcontrolapp.utils.SharedPrefUtils;
@@ -24,10 +25,11 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         String appStartTime = prefUtil.getString("startTime");
-        String childLimit = prefUtil.getString("child_limit") ;
-        long runningAppStartTime = appStartTime.isEmpty() ? 0 : Long.parseLong(appStartTime);
+        String childLimit = prefUtil.getString("child_limit");
+        Log.i("DashboardActivity", childLimit);
+        long runningAppStartTime = (appStartTime == null || appStartTime.isEmpty()) ? 0 : Long.parseLong(appStartTime);
         long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
-        long timeLimit = childLimit.isEmpty() ? 0 : Long.parseLong(childLimit) * 60;
+        long timeLimit = (childLimit == null || childLimit.isEmpty()) ? 0 : Long.parseLong(childLimit) * 60;
         long remainingTime = timeLimit - timeDiff;
         new CountDownTimer(remainingTime * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
