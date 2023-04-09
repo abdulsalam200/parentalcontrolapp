@@ -27,6 +27,21 @@ public class LoginActivity extends AppCompatActivity {
     Button loginBtn;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Boolean blockApp = getIntent().getBooleanExtra("login", false);
+
+        if(auth.getCurrentUser()!= null) {
+            openChildList();
+        }
+
+        if (prefUtil.getString("startTime") != "" && !blockApp){
+            Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
+            startActivity(i);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
@@ -34,10 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         prefUtil = new SharedPrefUtils(LoginActivity.this);
         Boolean blockApp = getIntent().getBooleanExtra("login", false);
 
-        // logout if user is already loggedin
         if(auth.getCurrentUser()!= null) {
-            // Start Next Activity
-            //return;
             openChildList();
         }
 

@@ -85,7 +85,7 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         // if screen time ends, block user to access device
         Boolean isBlocked = prefUtil.getBoolean("userBlocked");
         if(isBlocked) {
-            long resetTime = 60 * 7; // 10 minutes to reset
+            long resetTime = 60 * 4;
             if (timeDiff >= resetTime) {
                 Intent i = new Intent(UnblockReceiver.str_receiver);
                 context.sendBroadcast(i);

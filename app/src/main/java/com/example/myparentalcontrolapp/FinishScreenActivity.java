@@ -86,11 +86,7 @@ public class FinishScreenActivity extends AppCompatActivity {
 //                registerReceiver(uninstallReceiver, new IntentFilter(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
 
 
-                // start location tracking service
-                Intent intent = new Intent(getApplicationContext(), GoogleService.class);
-                startService(intent);
-                LocationReceiver locationReceiver = new LocationReceiver();
-                registerReceiver(locationReceiver, new IntentFilter(GoogleService.str_receiver));
+
 
                 UnblockReceiver unblockReceiver = new UnblockReceiver();
                 registerReceiver(unblockReceiver, new IntentFilter(UnblockReceiver.str_receiver));
