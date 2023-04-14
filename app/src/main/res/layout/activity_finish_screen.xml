@@ -4,49 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
     tools:context=".FinishScreenActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="All done"
-        android:textSize="25dp"
+        android:textSize="30dp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="25dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Great,this device is now protected."
-        android:textSize="20dp"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/black"
         android:layout_marginTop="100dp"
         android:layout_marginLeft="25dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Head to the Parents App on your own smartphone to supervise child's activity."
-        android:textSize="20dp"
+        android:text="Great,this device is now protected."
+        android:textSize="22dp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
         android:layout_marginTop="150dp"
         android:layout_marginLeft="25dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You can now close this app."
-        android:textSize="20dp"
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/finish"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/black"
-        android:layout_marginTop="250dp"
-        android:layout_marginLeft="25dp"/>
+        android:layout_centerVertical="true"/>
 
     <Button
         android:id="@+id/btn4"

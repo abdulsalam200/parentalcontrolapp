@@ -13,13 +13,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myparentalcontrolapp.receivers.LocationReceiver;
 import com.example.myparentalcontrolapp.services.GoogleService;
+import com.google.type.Color;
 
 public class OtherPermissionsActivity extends AppCompatActivity {
     private Button otherBtn;
+
 
     @Override
     protected void onResume() {
@@ -99,4 +102,5 @@ public class OtherPermissionsActivity extends AppCompatActivity {
             }
         }
     }
+
 }

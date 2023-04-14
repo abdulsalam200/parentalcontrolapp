@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.util.Log;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.myparentalcontrolapp.utils.SharedPrefUtils;
@@ -84,6 +85,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private  void login(String email, String password, Boolean blockApp)
     {
+        RelativeLayout loading = (RelativeLayout)findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -100,11 +103,13 @@ public class LoginActivity extends AppCompatActivity {
                                 if(blockApp) {
                                     moveTaskToBack(false);
                                 } else {
+                                    loading.setVisibility(View.INVISIBLE);
                                     openChildList();
                                 }
 
                             }
                         } else {
+                            loading.setVisibility(View.INVISIBLE);
                             // If sign in fails, display a message to the user.
                             Log.w("FirebaseTest", "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",

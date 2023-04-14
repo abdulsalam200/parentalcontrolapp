@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
     tools:context=".UsagePermissionActivity">
 
         <TextView
@@ -13,8 +12,8 @@
             android:text="Welcome"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:layout_marginTop="150dp"
-            android:textSize="20dp"
+            android:layout_marginTop="100dp"
+            android:textSize="30dp"
             android:layout_centerHorizontal="true"
             android:width="200dp"
             android:gravity="center"/>
@@ -24,12 +23,19 @@
             android:layout_height="wrap_content"
             android:text="Please confirm that you want to setup ParentalControl protection on this device"
             android:textColor="@color/black"
-            android:textSize="17dp"
+            android:textSize="20dp"
             android:layout_centerHorizontal="true"
-            android:width="200dp"
+            android:width="300dp"
             android:gravity="center"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="150dp"
             />
+
+        <ImageView
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:src="@drawable/mobileprotection"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
 
         <Button
             android:id="@+id/btn2"
