@@ -67,9 +67,8 @@ public class Utils {
                     result = event.getPackageName();
                 }
             }
-            if (!TextUtils.isEmpty(result))
-                Log.e("MyBackgroundRESULT", result);
         }
+
         return result;
     }
 }

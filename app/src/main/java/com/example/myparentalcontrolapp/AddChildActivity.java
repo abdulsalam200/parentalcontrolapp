@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.myparentalcontrolapp.models.Child;
@@ -104,6 +105,7 @@ public class AddChildActivity extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w("abd", "Error adding document", e);
+                                Toast.makeText(AddChildActivity.this, "Unable to save child, try later", Toast.LENGTH_SHORT).show();
                             }
                         });
             }

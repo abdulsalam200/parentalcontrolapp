@@ -15,6 +15,8 @@ public class DashboardActivity extends AppCompatActivity {
     TextView textView;
     SharedPrefUtils prefUtil;
 
+    CountDownTimer timer;
+
     private  void updateTimer()
     {
         Boolean isBlocked = prefUtil.getBoolean("userBlocked");
@@ -24,14 +26,19 @@ public class DashboardActivity extends AppCompatActivity {
             return;
         }
 
+        if(timer != null) {
+            timer.cancel();
+        }
+
         String appStartTime = prefUtil.getString("startTime");
         String childLimit = prefUtil.getString("child_limit");
-        Log.i("DashboardActivity", childLimit);
+
+        Log.i("MyDashboardActivity", childLimit);
         long runningAppStartTime = (appStartTime == null || appStartTime.isEmpty()) ? 0 : Long.parseLong(appStartTime);
         long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
         long timeLimit = (childLimit == null || childLimit.isEmpty()) ? 0 : Long.parseLong(childLimit) * 60;
         long remainingTime = timeLimit - timeDiff;
-        new CountDownTimer(remainingTime * 1000, 1000) {
+        timer = new CountDownTimer(remainingTime * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 Long sec = millisUntilFinished / 1000;
                 Long mins = sec >= 60 ? sec/60 : 0;

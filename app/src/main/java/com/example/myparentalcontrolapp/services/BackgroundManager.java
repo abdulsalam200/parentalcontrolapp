@@ -44,10 +44,6 @@ public class BackgroundManager {
                 Intent intent = new Intent(context, CustomJobIntentService.class);
                 CustomJobIntentService.enqueueWork(context, intent);
             }
-//            if (!isServiceRunning(GPSService.class)) {
-//                Intent intent = new Intent(context, GPSService.class);
-//                GPSService.enqueueWork(context, intent);
-//            }
         } else {
             if (!isServiceRunning(CustomIntentService.class)) {
                 context.startService(new Intent(context, CustomIntentService.class));

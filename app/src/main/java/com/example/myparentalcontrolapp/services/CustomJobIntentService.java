@@ -23,24 +23,32 @@ public class CustomJobIntentService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.i("CustomJobIntentService", "onhandle");
-        runApplock();
+        executeService();
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Log.i("AppDestroy", "on task remove job intent");
-        BackgroundManager.getInstance().init(this).startService();
+//        BackgroundManager.getInstance().init(this).startService();
+        restartService();
         super.onTaskRemoved(rootIntent);
     }
 
     @Override
     public void onDestroy() {
         Log.i("AppDestroy", "on destroy job intent");
-        BackgroundManager.getInstance().init(this).startService();
+//        BackgroundManager.getInstance().init(this).startService();
+        restartService();
         super.onDestroy();
     }
 
-    private void runApplock() {
+    private  void restartService()
+    {
+        Intent intent = new Intent(this, CustomJobIntentService.class);
+        CustomJobIntentService.enqueueWork(this, intent);
+    }
+
+    private void executeService() {
         long endTime = System.currentTimeMillis() + 2000;
         while (System.currentTimeMillis() < endTime) {
             synchronized (this) {

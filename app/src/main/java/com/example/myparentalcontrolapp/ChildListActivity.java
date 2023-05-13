@@ -53,9 +53,9 @@ public class ChildListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.child_list_activity);
 
-
         prefs = new SharedPrefUtils(ChildListActivity.this);
 
+        // if user is not logged in, return to login activity
         if (currentUser == null)
         {
             Intent intent = new Intent(ChildListActivity.this, LoginActivity.class);
@@ -83,7 +83,8 @@ public class ChildListActivity extends AppCompatActivity {
                         Long timeLimit = document.getLong("timeLimit");
                         String blockedApps = document.getString("blockedApps");
 
-                        childList.add(new Child(name, age, gender, id, timeLimit, blockedApps));
+                        Child child = new Child(name, age, gender, id, timeLimit, blockedApps);
+                        childList.add(child);
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -122,6 +123,4 @@ public class ChildListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddChildActivity.class);
         startActivity(intent);
     }
-
-
 }

@@ -50,6 +50,7 @@ public class UsagePermissionActivity extends AppCompatActivity {
                     return;
                 }
 
+                // if already has usage permissions
                 Intent intent = new Intent(UsagePermissionActivity.this, OtherPermissionsActivity.class);
                 startActivity(intent);
             }

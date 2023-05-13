@@ -30,13 +30,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Boolean blockApp = getIntent().getBooleanExtra("login", false);
+        Boolean isSettingsApp = getIntent().getBooleanExtra("login", false);
 
+        // if user is already logged in
         if(auth.getCurrentUser()!= null) {
             openChildList();
         }
 
-        if (prefUtil.getString("startTime") != "" && !blockApp){
+        // if timer started and settings app is not requested
+        if (prefUtil.getString("startTime") != "" && !isSettingsApp){
             Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
             startActivity(i);
         }
@@ -48,13 +50,16 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
         auth = FirebaseAuth.getInstance();
         prefUtil = new SharedPrefUtils(LoginActivity.this);
-        Boolean blockApp = getIntent().getBooleanExtra("login", false);
+        Boolean isSettingsApp = getIntent().getBooleanExtra("login", false);
 
+
+        // if user is already logged in
         if(auth.getCurrentUser()!= null) {
             openChildList();
         }
 
-        if (prefUtil.getString("startTime") != "" && !blockApp){
+        // if timer started and settings app is not requested
+        if (prefUtil.getString("startTime") != "" && !isSettingsApp){
             Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
             startActivity(i);
         }
@@ -78,12 +83,12 @@ public class LoginActivity extends AppCompatActivity {
                             return;
                 }
                 // call login method with email and password
-                login(email,password, blockApp);
+                login(email,password, isSettingsApp);
             }
         });
     }
 
-    private  void login(String email, String password, Boolean blockApp)
+    private  void login(String email, String password, Boolean isSettingsApp)
     {
         RelativeLayout loading = (RelativeLayout)findViewById(R.id.loading);
         loading.setVisibility(View.VISIBLE);
@@ -97,13 +102,11 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = auth.getCurrentUser();
 
                             // Start Next Activity
-
-
                             if (user != null) {
-                                if(blockApp) {
+                                loading.setVisibility(View.INVISIBLE);
+                                if(isSettingsApp) {
                                     moveTaskToBack(false);
                                 } else {
-                                    loading.setVisibility(View.INVISIBLE);
                                     openChildList();
                                 }
 
@@ -118,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
     public void openChildList() {
         Intent intent = new Intent(this, ChildListActivity.class);
         startActivity(intent);

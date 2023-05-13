@@ -37,14 +37,14 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
 
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    public static void killThisPackageIfRunning(final Context context, String packageName) {
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        Intent startMain = new Intent(Intent.ACTION_MAIN);
-        startMain.addCategory(Intent.CATEGORY_HOME);
-        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(startMain);
-        activityManager.killBackgroundProcesses(packageName);
-    }
+//    public static void killThisPackageIfRunning(final Context context, String packageName) {
+//        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+//        Intent startMain = new Intent(Intent.ACTION_MAIN);
+//        startMain.addCategory(Intent.CATEGORY_HOME);
+//        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        context.startActivity(startMain);
+//        activityManager.killBackgroundProcesses(packageName);
+//    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -55,6 +55,10 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         String packageName = utils.getLauncherTopApp();
         Log.i("ActivityBroadcast", packageName.toString());
 
+        if(packageName.isEmpty() || packageName.equals("com.huawei.android.launcher") || packageName.equals("com.huawei.systemmanager"))
+        {
+            return;
+        }
 
         // if app is in blocked apps list, kill the app
         String[] blockedApps = prefUtil.getString("child_blockedApps").split(",");
@@ -77,7 +81,7 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
 
         // calculate time diff from start
         String appStartTime = prefUtil.getString("startTime");
-        String childLimit = prefUtil.getString("child_limit") ;
+        String childLimit = prefUtil.getString("child_limit");
         long runningAppStartTime = appStartTime.isEmpty() ? 0 : Long.parseLong(appStartTime);
         long timeDiff = (System.currentTimeMillis() - runningAppStartTime)/1000;
         Log.i("ActivityBroadcast", timeDiff+" time difference");
@@ -85,9 +89,11 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
         // if screen time ends, block user to access device
         Boolean isBlocked = prefUtil.getBoolean("userBlocked");
         if(isBlocked) {
-            long resetTime = 60 * 4;
+            long resetTime = 60 * 60 * 24;
             if (timeDiff >= resetTime) {
                 Intent i = new Intent(UnblockReceiver.str_receiver);
+                i.putExtra("actionName", "reset");
+                i.putExtra("childId", prefUtil.getString("child_id"));
                 context.sendBroadcast(i);
             }
             if (!packageName.equals(context.getPackageName().toString())) {
@@ -147,6 +153,11 @@ public class ActivityBroadcastReceiver extends BroadcastReceiver {
                                 Log.w("abd", "Error adding Activity Log", e);
                             }
                         });
+
+//                Intent i = new Intent(UnblockReceiver.str_receiver);
+//                i.putExtra("actionName", "block-apps");
+//                i.putExtra("childId", prefUtil.getString("child_id"));
+//                context.sendBroadcast(i);
             }
 
         }
